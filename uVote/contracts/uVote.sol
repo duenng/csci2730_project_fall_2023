@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity >=0.4.22 <0.9.0;
 
-contract EVoting {
+contract uVote {
 
     struct Vote {
         mapping(uint256 => uint256) optionCounts; // Counts votes for each option
