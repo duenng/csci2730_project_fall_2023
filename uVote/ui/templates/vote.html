@@ -8,7 +8,43 @@
                     <h1 class="h2">Voting System</h1>
                     <p>CSCI2730 Project - To apply blockchain on uReply.</p>
                 </div>
-
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary" id="create-ballot-button">Create Ballot</button>
+                </div>
+                <div id="create-ballot-modal" class="modal fade" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <!-- Modal content goes here -->
+                            <div class="modal-header">
+                                <h5 class="modal-title">Create New Ballot</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="create-vote-form">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="vote-title">Vote Title:</label>
+                                        <input type="text" class="form-control" id="vote-title" name="vote-title" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="max-choices">Max Choices:</label>
+                                        <input type="number" class="form-control" id="max-choices" name="max-choices" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="options">Options (comma-separated):</label>
+                                        <input type="text" class="form-control" id="options" name="options" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Create Vote</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-12">
                     {% for ballot in ballots %}
                         <div class="ballot" id="ballot{{ ballot.id }}">
@@ -50,6 +86,42 @@
             }
         });
     }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+
+<script>
+    // Attach a click event handler to the "Create Vote" button
+    document.getElementById('create-ballot-button').addEventListener('click', function() {
+        // Open the modal
+        $('#create-ballot-modal').modal('show');
+    });
+    // Attach a submit event handler to the form
+    document.getElementById('create-vote-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get the form data
+        const formData = new FormData(this);
+
+        // Send the form data to your backend using fetch or AJAX
+        fetch('/createvote/', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (response.ok) {
+                // Form submission was successful, you can close the modal if needed
+                $('#create-ballot-modal').modal('hide');
+                // Reload the page or update the UI as necessary
+                location.reload(); // Reload the page to display the new ballot
+            } else {
+                // Handle form submission errors
+                console.error('Form submission failed.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
 </script>
 
 {% endblock %}

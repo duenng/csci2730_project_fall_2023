@@ -1,6 +1,15 @@
 <!doctype html>
 {% load static %}
 <html lang="en">
+<script>
+	if (typeof web3 !== 'undefined') {
+	// Use the injected provider (MetaMask)
+	web3 = new Web3(web3.currentProvider);
+	} else {
+		// Handle the case where Web3 is not available
+		console.errsor('Web3 is not available. Please install MetaMask or use a Web3-enabled browser.');
+	}
+</script>
   <head>
   	<title>{%block title%}uVote{%endblock%}</title>
     <meta charset="utf-8">
