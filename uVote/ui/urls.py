@@ -7,6 +7,8 @@ urlpatterns = [
     path("", views.root, name="root"),
     path("home", views.home, name="home"),
     path("vote", views.vote, name="vote"),
-    path('login/', auth_views.LoginView.as_view(authentication_form=CustomAuthenticationForm), name='login'),
+    path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'), 
+    path('logout/', views.logout_view, name='logout'),
+    path('please/', views.please, name='please'),
 ]

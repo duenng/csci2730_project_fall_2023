@@ -4,10 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
-class ToDoItem(models.Model):
-    title = models.CharField(max_length=200)
-    completed = models.BooleanField(default=False)
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -31,13 +27,14 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
+    username = models.CharField(_('username'), max_length=150, unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.email

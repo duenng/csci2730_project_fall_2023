@@ -1,12 +1,19 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from web3 import Web3
 from .blockchain import *
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
+from django.http import JsonResponse
 
 def home(request):
-    return render(request, "home.html")
+    return render(request, "home.html", {'active_page': 'home'})
 
 def vote(request):
+    if not request.user.is_authenticated:
+        # Return a response that triggers a JavaScript alert
+        return render(request, "registration/please.html")
+
     web3, contract = initialize_web3_and_contract()
     ballots = fetch_ballots(contract)
 
@@ -25,18 +32,48 @@ def vote(request):
         
         return redirect('home')
 
-    return render(request, "vote.html", {"ballots": ballots})
+    return render(request, "vote.html", {"ballots": ballots, 'active_page': 'vote'})
+
 
 def root(request):
     return redirect('home')
 
+def please(request):
+    return render(request, "please.html")
+
+def logout_view(request):
+    logout(request)
+    return redirect('home') 
+
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            # Redirect to a success page or login page
-            return redirect('login')  # Assuming you have a 'login' URL pattern
+            return redirect('login')  # Redirect after successful registration
     else:
-        form = UserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
+        form = CustomUserCreationForm()
+
+    return render(request, 'registration/register.html', {'form': form, 'active_page': 'register'})
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from .forms import CustomAuthenticationForm
+
+def login_view(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Redirect to a success page.
+            else:
+                # Return an 'invalid login' error message
+                form.add_error(None, "Invalid username or password.")
+    else:
+        form = CustomAuthenticationForm()
+
+    return render(request, 'registration/login.html', {'form': form, 'active_page': 'login'})

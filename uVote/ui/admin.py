@@ -1,14 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
-from .models import ToDoItem
 # Register your models here.
 
-admin.site.register(ToDoItem)
-
 # admin.py
-
-
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ['email', 'is_staff', 'is_active']
