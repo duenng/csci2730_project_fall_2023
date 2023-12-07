@@ -8,17 +8,17 @@
                     <h1 class="h2">Voting System</h1>
                     <p>CSCI2730 Project - To apply blockchain on uReply.</p>
                 </div>
-                <!-- Voting Ballot Display -->
+
                 <div class="col-md-12">
                     {% for ballot in ballots %}
-                        <div class="ballot">
+                        <div class="ballot" id="ballot{{ ballot.id }}">
                             <h2>Ballot #{{ ballot.id }}</h2>
                             <form method="post" action="{% url 'cast_vote' ballot.id %}">
                                 {% csrf_token %}
                                 <div class="options">
                                     {% for option in ballot.options %}
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="options" value="{{ option.id }}" id="option{{ option.id }}">
+                                            <input class="form-check-input" type="checkbox" name="options" value="{{ option.id }}" id="option{{ option.id }}" onchange="limitCheckboxSelection('{{ ballot.id }}', {{ ballot.maxChoices }})">
                                             <label class="form-check-label" for="option{{ option.id }}">
                                                 {{ option.description }}
                                             </label>
@@ -36,4 +36,20 @@
         </div>
     </section>
 </div>
+
+<script>
+    function limitCheckboxSelection(ballotId, maxChoices) {
+        var checkboxes = document.querySelectorAll(`#ballot${ballotId} input[type='checkbox']`);
+        var checkedCount = Array.from(checkboxes).filter(chk => chk.checked).length;
+
+        checkboxes.forEach(chk => {
+            if (checkedCount >= maxChoices) {
+                chk.disabled = !chk.checked;
+            } else {
+                chk.disabled = false;
+            }
+        });
+    }
+</script>
+
 {% endblock %}
