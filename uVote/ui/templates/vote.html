@@ -6,24 +6,51 @@
             <div class="row">
                 <div class="col-md-12 mb-4">
                     <h1 class="h2">Voting System</h1>
-                    <p>CSCI2730 Project - To apply blockchain on uReply.</p>
+                </div>
+                <div id="wallet-address-display"></div>
+                <div class="col-md-12 mb-2">
+                    <button type="button" class="btn btn-primary" id="connect-wallet-button">Connect Wallet</button>
                 </div>
                 <div class="col-md-12">
                     <button type="button" class="btn btn-primary" id="create-ballot-button">Create Ballot</button>
                 </div>
+                <div>
+                                <input type="number" id="check-open-vote-id" placeholder="Ballot ID">
+                                <button onclick="checkIfVotingOpen(getInputValue('check-open-vote-id'))">Check If Voting Open</button>
+                                <input type="number" id="get-max-choices-id" placeholder="Ballot ID">
+    <button onclick="getMaxChoices(getInputValue('get-max-choices-id'))">Get Max Choices</button>
+    <input type="number" id="get-option-count-id" placeholder="Ballot ID">
+    <input type="number" id="get-option-count-option" placeholder="Option">
+    <button onclick="getOptionCount(getInputValue('get-option-count-id'), getInputValue('get-option-count-option'))">Get Option Count</button>
+    <input type="number" id="check-voted-id" placeholder="Ballot ID">
+    <input type="text" id="check-voted-address" placeholder="Voter Address">
+    <button onclick="checkIfVoted(getInputValue('check-voted-id'), getInputValue('check-voted-address'))">Check If Voted</button>
+    <input type="number" id="cast-vote-id" placeholder="Ballot ID">
+    <input type="text" id="cast-vote-options" placeholder="Options (comma-separated)">
+    <button onclick="castVote(getInputValue('cast-vote-id'), getInputValue('cast-vote-options').split(',').map(Number))">Cast Vote</button>
+    <input type="number" id="tally-votes-id" placeholder="Ballot ID">
+    <button onclick="tallyVotes(getInputValue('tally-votes-id'))">Tally Votes</button>
+
+
+                            </div>
                 <div id="create-ballot-modal" class="modal fade" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <!-- Modal content goes here -->
                             <div class="modal-header">
                                 <h5 class="modal-title">Create New Ballot</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
+                                
                             </div>
+
                             <div class="modal-body">
                                 <form id="create-vote-form">
                                     {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="wallet-address">Wallet Address:</label>
+                                        <input type="text" class="form-control" id="wallet-address" name="wallet-address" readonly>
+                                    </div>
                                     <div class="form-group">
                                         <label for="vote-title">Vote Title:</label>
                                         <input type="text" class="form-control" id="vote-title" name="vote-title" required>
@@ -45,83 +72,379 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    {% for ballot in ballots %}
-                        <div class="ballot" id="ballot{{ ballot.id }}">
-                            <h2>Ballot #{{ ballot.id }}</h2>
-                            <form method="post" action="{% url 'cast_vote' ballot.id %}">
-                                {% csrf_token %}
-                                <div class="options">
-                                    {% for option in ballot.options %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="options" value="{{ option.id }}" id="option{{ option.id }}" onchange="limitCheckboxSelection('{{ ballot.id }}', {{ ballot.maxChoices }})">
-                                            <label class="form-check-label" for="option{{ option.id }}">
-                                                {{ option.description }}
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                                <button type="submit" class="btn btn-primary">Cast Vote</button>
-                            </form>
-                        </div>
-                    {% empty %}
-                        <p>No active ballots to vote on.</p>
-                    {% endfor %}
+                <div class="col-md-12" id="votes-container">
+                    <!-- Active votes will be displayed here -->
                 </div>
             </div>
         </div>
     </section>
 </div>
 
-<script>
-    function limitCheckboxSelection(ballotId, maxChoices) {
-        var checkboxes = document.querySelectorAll(`#ballot${ballotId} input[type='checkbox']`);
-        var checkedCount = Array.from(checkboxes).filter(chk => chk.checked).length;
+<script src="https://cdn.jsdelivr.net/npm/web3@1.3.0/dist/web3.min.js"></script>
 
-        checkboxes.forEach(chk => {
-            if (checkedCount >= maxChoices) {
-                chk.disabled = !chk.checked;
-            } else {
-                chk.disabled = false;
-            }
-        });
+<script>
+    let web3;
+    let walletAddress = null;
+    let uVoteContract;
+    function getInputValue(elementId) {
+        return document.getElementById(elementId).value;
     }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    async function initContract() {
+        const contractABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "optionCounts",
+				"type": "uint256[]"
+			}
+		],
+		"name": "VoteEnded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "VoteStarted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "selectedOptions",
+				"type": "uint256[]"
+			}
+		],
+		"name": "Voted",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "selectedOptions",
+				"type": "uint256[]"
+			}
+		],
+		"name": "castVote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "getMaxChoices",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "option",
+				"type": "uint256"
+			}
+		],
+		"name": "getOptionCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			}
+		],
+		"name": "hasVoted",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "isVotingOpen",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "nextBallotId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "_options",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_maxChoices",
+				"type": "uint256"
+			}
+		],
+		"name": "startVote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "tallyVotes",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+        const contractAddress = '0xa2266Cba6bbEB0d976af4d4705AdBE23d44C5eCE';
+        uVoteContract = new web3.eth.Contract(contractABI, contractAddress);
+        displayActiveVotes();
+    }
 
-<script>
-    // Attach a click event handler to the "Create Vote" button
+    async function initWeb3() {
+        if (typeof window.ethereum !== 'undefined') {
+            web3 = new Web3(window.ethereum);
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const accounts = await web3.eth.getAccounts();
+                walletAddress = accounts[0];
+                await initContract();
+
+                document.getElementById('wallet-address').value = walletAddress;
+                document.getElementById('wallet-address-display').innerText = `Wallet Address: ${walletAddress}`;
+            } catch (error) {
+                console.error('Error connecting to MetaMask:', error);
+            }
+        } else {
+            console.error('MetaMask is not available...');
+        }
+    }
+
+    document.getElementById('connect-wallet-button').addEventListener('click', initWeb3);
+
+    document.getElementById('create-vote-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        if (!walletAddress) {
+            console.error('Wallet address not available. Please connect your wallet.');
+            return;
+        }
+
+        const maxChoices = document.getElementById('max-choices').value;
+        const options = document.getElementById('options').value.split(',').map(Number);
+
+        try {
+            const transaction = uVoteContract.methods.startVote(options, maxChoices).send({ from: walletAddress });
+
+            transaction.on('transactionHash', function(hash){
+                console.log('Transaction Hash:', hash);
+            });
+
+            transaction.on('receipt', function(receipt){
+                console.log('Receipt:', receipt);
+                $('#create-ballot-modal').modal('hide');
+                displayActiveVotes();
+            });
+
+            transaction.on('error', function(error){
+                console.error('Transaction Error:', error);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
     document.getElementById('create-ballot-button').addEventListener('click', function() {
-        // Open the modal
         $('#create-ballot-modal').modal('show');
     });
-    // Attach a submit event handler to the form
-    document.getElementById('create-vote-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
 
-        // Get the form data
-        const formData = new FormData(this);
+    async function displayActiveVotes() {
+        if (!uVoteContract) {
+            console.log('Contract not initialized');
+            return;
+        }
 
-        // Send the form data to your backend using fetch or AJAX
-        fetch('/createvote/', {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => {
-            if (response.ok) {
-                // Form submission was successful, you can close the modal if needed
-                $('#create-ballot-modal').modal('hide');
-                // Reload the page or update the UI as necessary
-                location.reload(); // Reload the page to display the new ballot
-            } else {
-                // Handle form submission errors
-                console.error('Form submission failed.');
+        try {
+            const nextBallotId = await uVoteContract.methods.nextBallotId().call();
+            let activeVotes = [];
+
+            for (let i = 0; i < nextBallotId; i++) {
+                let isOpen = await uVoteContract.methods.isVotingOpen(i).call();
+                if (isOpen) {
+                    activeVotes.push(i);
+                }
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
+
+            renderVotes(activeVotes);
+        } catch (error) {
+            console.error('Error fetching active votes:', error);
+        }
+    }
+
+    function renderVotes(voteList) {
+        const votesContainer = document.getElementById('votes-container');
+        votesContainer.innerHTML = '';
+
+        voteList.forEach(vote => {
+            const voteElement = document.createElement('div');
+            voteElement.classList.add('vote-item');
+            voteElement.innerText = `Vote ID: ${vote}`;
+            votesContainer.appendChild(voteElement);
         });
-    });
+    }
+    async function tallyVotes(ballotId) {
+    try {
+        const transaction = await uVoteContract.methods.tallyVotes(ballotId).send({ from: walletAddress });
+        console.log('Votes tallied successfully:', transaction);
+    } catch (error) {
+        console.error('Error tallying votes:', error);
+    }
+}
+async function castVote(ballotId, selectedOptions) {
+    try {
+        const transaction = await uVoteContract.methods.castVote(ballotId, selectedOptions).send({ from: walletAddress });
+        console.log('Vote cast successfully:', transaction);
+    } catch (error) {
+        console.error('Error casting vote:', error);
+    }
+}
+async function checkIfVoted(ballotId, voterAddress) {
+    try {
+        const hasVoted = await uVoteContract.methods.hasVoted(ballotId, voterAddress).call();
+        console.log(`Voter ${voterAddress} has voted in ballot ID ${ballotId}: ${hasVoted}`);
+        return hasVoted;
+    } catch (error) {
+        console.error('Error checking if voted:', error);
+    }
+}
+async function getOptionCount(ballotId, option) {
+    try {
+        const count = await uVoteContract.methods.getOptionCount(ballotId, option).call();
+        console.log(`Count for option ${option} in ballot ID ${ballotId}: ${count}`);
+        return count;
+    } catch (error) {
+        console.error('Error getting option count:', error);
+    }
+}
+async function getMaxChoices(ballotId) {
+    try {
+        const maxChoices = await uVoteContract.methods.getMaxChoices(ballotId).call();
+        console.log(`Maximum choices for ballot ID ${ballotId}: ${maxChoices}`);
+        return maxChoices;
+    } catch (error) {
+        console.error('Error getting maximum choices:', error);
+    }
+}
+async function checkIfVotingOpen(ballotId) {
+    try {
+        const isOpen = await uVoteContract.methods.isVotingOpen(ballotId).call();
+        console.log(`Voting for ballot ID ${ballotId} is open: ${isOpen}`);
+        return isOpen;
+    } catch (error) {
+        console.error('Error checking if voting is open:', error);
+    }
+}
+
 </script>
 
 {% endblock %}

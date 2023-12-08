@@ -1,54 +1,47 @@
 <!doctype html>
 {% load static %}
 <html lang="en">
-<script>
-	if (typeof web3 !== 'undefined') {
-	// Use the injected provider (MetaMask)
-	web3 = new Web3(web3.currentProvider);
-	} else {
-		// Handle the case where Web3 is not available
-		console.errsor('Web3 is not available. Please install MetaMask or use a Web3-enabled browser.');
-	}
-</script>
-  <head>
-  	<title>{%block title%}uVote{%endblock%}</title>
+<script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+
+<head>
+    <title>{% block title %}uVote{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
 
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	
-	<link rel="stylesheet" href="{% static 'base_css/style.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	</head>
-	<body>
-	<div id="colorlib-page">
-		<a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
-		<aside id="colorlib-aside" role="complementary" class="js-fullheight">
-			<nav id="colorlib-main-menu" role="navigation">
-				<ul>
-					<li class="{% if active_page == 'home' %}colorlib-active{% endif %}"><a href="/home">Home</a></li>
-					<li class="{% if active_page == 'vote' %}colorlib-active{% endif %}"><a href="/vote">Vote</a></li>
-					{% if not user.is_authenticated %}
-					<li class="{% if active_page == 'login' %}colorlib-active{% endif %}"><a href="/login">Login</a></li>
-					<li class="{% if active_page == 'register' %}colorlib-active{% endif %}"><a href="/register">Register</a></li>
-					{% endif %}
-					{% if user.is_authenticated %}
-						<li><a href="{% url 'logout' %}">Logout</a></li>
-					{% endif %}
-				</ul>
-			</nav>
-		</aside>
-		{% block content %}
-		{% endblock %}
-	</div>]
-	</section>
+    <link rel="stylesheet" href="{% static 'base_css/style.css' %}">
 
-	<script src="{% static 'base_js/jquery.min.js' %}"></script>
-	<script src="{% static 'base_js/popper.js' %}"></script>
-	<script src="{% static 'base_js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'base_js/main.js' %}"></script>
-	</body>
+</head>
+<body>
+<div id="colorlib-page">
+    <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
+    <aside id="colorlib-aside" role="complementary" class="js-fullheight">
+        <nav id="colorlib-main-menu" role="navigation">
+            <ul>
+                <li class="{% if active_page == 'home' %}colorlib-active{% endif %}"><a href="/home">Home</a></li>
+                <li class="{% if active_page == 'vote' %}colorlib-active{% endif %}"><a href="/vote">Vote</a></li>
+                {% if not user.is_authenticated %}
+                <li class="{% if active_page == 'login' %}colorlib-active{% endif %}"><a href="/login">Login</a></li>
+                <li class="{% if active_page == 'register' %}colorlib-active{% endif %}"><a href="/register">Register</a></li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </aside>
+    {% block content %}
+    {% endblock %}
+</div>
+</section>
+
+<script src="{% static 'base_js/jquery.min.js' %}"></script>
+<script src="{% static 'base_js/popper.js' %}"></script>
+<script src="{% static 'base_js/bootstrap.min.js' %}"></script>
+<script src="{% static 'base_js/main.js' %}"></script>
+
+</body>
 </html>
-

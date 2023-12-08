@@ -10983,12 +10983,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x64b2013eF2e08eA942b0F787cDa888A49645668c",
-      "transactionHash": "0xb80c9e1fe572e090ad4b9b1586d104f9fb5c70a56408b5e136f6c18c1c2d1059"
+      "address": "0xa2266Cba6bbEB0d976af4d4705AdBE23d44C5eCE",
+      "transactionHash": "0x1851036342418799f110bfd389a8a8b77f64b1e60c58f4916d15d3a62f6bb033"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2023-12-06T23:04:31.365Z",
+  "updatedAt": "2023-12-07T22:15:44.971Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

@@ -19,7 +19,7 @@ def initialize_web3_and_contract():
     contract_abi = load_contract_abi()
 
     # Replace with your contract address
-    contract_address = '0x64b2013eF2e08eA942b0F787cDa888A49645668c'
+    contract_address = '0xa2266Cba6bbEB0d976af4d4705AdBE23d44C5eCE'
 
     # Create a contract instance
     contract = web3.eth.contract(address=contract_address, abi=contract_abi)
@@ -57,45 +57,3 @@ def submit_vote(web3, contract, from_address, ballot_id, selected_options):
     })
     # Sign and send the transaction. Requires the user's private key.
     # Private key handling should be done securely.
-
-# Create a new ballot
-def create_ballot(request):
-    if request.method == 'POST':
-        # Detect the user's MetaMask address
-        if 'web3' in request.session:
-            web3 = request.session['web3']
-            from_address = web3.eth.defaultAccount
-        else:
-            # Handle the case where MetaMask is not connected
-            return render(request, "error.html", {'message': 'Please connect your MetaMask wallet.'})
-
-        max_choices = int(request.POST.get('max_choices'))
-        options = [int(option) for option in request.POST.get('options').split(',')]
-
-        try:
-            # Initialize Web3 and the contract
-            web3, contract = initialize_web3_and_contract()
-
-            # Create a transaction object for the create_ballot function
-            transaction = contract.functions.startVote(options, max_choices).buildTransaction({
-                'from': from_address,
-                'nonce': web3.eth.getTransactionCount(from_address),
-                # Add other transaction parameters like gas, gasPrice, etc.
-            })
-
-            # Sign the transaction with MetaMask
-            signed_transaction = web3.eth.account.signTransaction(transaction, private_key=None)  # Private key handled by MetaMask
-
-            # Send the signed transaction to the Ethereum network
-            transaction_hash = web3.eth.sendRawTransaction(signed_transaction.rawTransaction)
-
-            return redirect('home')
-
-        except Exception as e:
-            # Handle transaction errors and provide feedback to the user
-            return render(request, "error.html", {'message': f'Transaction failed: {str(e)}'})
-
-    # Handle other cases (GET request)
-    # You can render a form for creating a new ballot here
-
-    return render(request, "create_ballot.html", {'active_page': 'create_ballot'})
