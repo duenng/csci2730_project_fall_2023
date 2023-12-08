@@ -3,6 +3,7 @@ from . import views
 from django.contrib.auth import views as auth_views
 from .forms import CustomAuthenticationForm
 
+
 urlpatterns = [
     path("", views.root, name="root"),
     path("home", views.home, name="home"),
@@ -11,4 +12,5 @@ urlpatterns = [
     path('register/', views.register_view, name='register'), 
     path('logout/', views.logout_view, name='logout'),
     path('please/', views.please, name='please'),
+    path('submit_vote_options/', views.submit_vote_options, name='submit_vote_options'),
 ]

@@ -1,7 +1,32 @@
 from web3 import Web3, HTTPProvider
 from django.shortcuts import render, redirect
 import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import VotingOption
 import os
+
+
+
+def submit_vote_options(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            options_data = data['optionsData']
+            vote_id = data['voteId']  # Capture the vote ID
+
+            # Process and save each option with the vote ID
+            for option in options_data:
+                VotingOption.objects.create(
+                    vote_id=vote_id,
+                    option_number=option['number'],
+                    option_name=option['name']
+                )
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'invalid request'}, status=400)
 
 # Load the contract ABI from a JSON file
 def load_contract_abi():
@@ -19,7 +44,7 @@ def initialize_web3_and_contract():
     contract_abi = load_contract_abi()
 
     # Replace with your contract address
-    contract_address = '0xa2266Cba6bbEB0d976af4d4705AdBE23d44C5eCE'
+    contract_address = '0x6e214b44F8fe75fcA35b818Bbd639b4F3358B300'
 
     # Create a contract instance
     contract = web3.eth.contract(address=contract_address, abi=contract_abi)

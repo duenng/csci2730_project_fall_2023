@@ -1,9 +1,15 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
+from .models import VotingOption
 # Register your models here.
 
 # admin.py
+class VotingOptionAdmin(admin.ModelAdmin):
+    list_display = ('vote_id', 'option_number', 'option_name')
+
+    
+
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ['email', 'is_staff', 'is_active']
@@ -22,3 +28,4 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(VotingOption, VotingOptionAdmin)
