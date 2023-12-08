@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity >=0.4.22 <0.9.0;
 
-contract uVote {
+import "@openzeppelin/contracts/access/AccessControl.sol";
+
+contract uVote is AccessControl {
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     struct Vote {
         mapping(uint256 => uint256) optionCounts; // Counts votes for each option
@@ -23,6 +25,10 @@ contract uVote {
     event Voted(address indexed voter, uint256 ballotId, uint256[] selectedOptions);
     event VoteEnded(uint256 ballotId, uint256[] optionCounts);
 
+    constructor() {
+        _setupRole(ADMIN_ROLE, msg.sender);
+    }
+
     function isVotingOpen(uint256 ballotId) public view returns (bool) {
         return ballots[ballotId].votingOpen;
     }
@@ -39,7 +45,7 @@ contract uVote {
         return ballots[ballotId].hasVoted[voter];
     }
 
-    function startVote(uint256[] memory _options, uint256 _maxChoices) public {
+    function startVote(uint256[] memory _options, uint256 _maxChoices) public onlyRole(ADMIN_ROLE) {
         uint256 ballotId = nextBallotId++;
         ballots[ballotId].votingOpen = true;
         ballots[ballotId].options = _options;
@@ -63,7 +69,7 @@ contract uVote {
         emit Voted(msg.sender, ballotId, selectedOptions);
     }
 
-    function tallyVotes(uint256 ballotId) public {
+    function tallyVotes(uint256 ballotId) public onlyRole(ADMIN_ROLE) {
         require(ballots[ballotId].votingOpen, "Voting is not open");
         ballots[ballotId].votingOpen = false;
 

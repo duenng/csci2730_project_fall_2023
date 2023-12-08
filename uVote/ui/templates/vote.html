@@ -7,32 +7,30 @@
                 <div class="col-md-12 mb-4">
                     <h1 class="h2">Voting System</h1>
                 </div>
-                <div id="wallet-address-display"></div>
+                <div id="wallet-address-display" class="ml-4 mb-4"></div>
                 <div class="col-md-12 mb-2">
                     <button type="button" class="btn btn-primary" id="connect-wallet-button">Connect Wallet</button>
                 </div>
                 <div class="col-md-12">
-                    <button type="button" class="btn btn-primary" id="create-ballot-button">Create Ballot</button>
+                    <button type="button" class="btn btn-primary mb-4" id="create-ballot-button">Create Ballot</button>
                 </div>
                 <div>
-                                <input type="number" id="check-open-vote-id" placeholder="Ballot ID">
-                                <button onclick="checkIfVotingOpen(getInputValue('check-open-vote-id'))">Check If Voting Open</button>
-                                <input type="number" id="get-max-choices-id" placeholder="Ballot ID">
-    <button onclick="getMaxChoices(getInputValue('get-max-choices-id'))">Get Max Choices</button>
-    <input type="number" id="get-option-count-id" placeholder="Ballot ID">
-    <input type="number" id="get-option-count-option" placeholder="Option">
-    <button onclick="getOptionCount(getInputValue('get-option-count-id'), getInputValue('get-option-count-option'))">Get Option Count</button>
-    <input type="number" id="check-voted-id" placeholder="Ballot ID">
-    <input type="text" id="check-voted-address" placeholder="Voter Address">
-    <button onclick="checkIfVoted(getInputValue('check-voted-id'), getInputValue('check-voted-address'))">Check If Voted</button>
-    <input type="number" id="cast-vote-id" placeholder="Ballot ID">
-    <input type="text" id="cast-vote-options" placeholder="Options (comma-separated)">
-    <button onclick="castVote(getInputValue('cast-vote-id'), getInputValue('cast-vote-options').split(',').map(Number))">Cast Vote</button>
-    <input type="number" id="tally-votes-id" placeholder="Ballot ID">
-    <button onclick="tallyVotes(getInputValue('tally-votes-id'))">Tally Votes</button>
-
-
-                            </div>
+                    <input type="number" id="check-open-vote-id" placeholder="Ballot ID">
+                    <button onclick="checkIfVotingOpen(getInputValue('check-open-vote-id'))">Check If Voting Open</button>
+                    <input type="number" id="get-max-choices-id" placeholder="Ballot ID">
+                    <button onclick="getMaxChoices(getInputValue('get-max-choices-id'))">Get Max Choices</button>
+                    <input type="number" id="get-option-count-id" placeholder="Ballot ID">
+                    <input type="number" id="get-option-count-option" placeholder="Option">
+                    <button onclick="getOptionCount(getInputValue('get-option-count-id'), getInputValue('get-option-count-option'))">Get Option Count</button>
+                    <input type="number" id="check-voted-id" placeholder="Ballot ID">
+                    <input type="text" id="check-voted-address" placeholder="Voter Address">
+                    <button onclick="checkIfVoted(getInputValue('check-voted-id'), getInputValue('check-voted-address'))">Check If Voted</button>
+                    <input type="number" id="cast-vote-id" placeholder="Ballot ID">
+                    <input type="text" id="cast-vote-options" placeholder="Options (comma-separated)">
+                    <button onclick="castVote(getInputValue('cast-vote-id'), getInputValue('cast-vote-options').split(',').map(Number))">Cast Vote</button>
+                    <input type="number" id="tally-votes-id" placeholder="Ballot ID">
+                    <button onclick="tallyVotes(getInputValue('tally-votes-id'))">Tally Votes</button>
+                </div>
                 <div id="create-ballot-modal" class="modal fade" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
