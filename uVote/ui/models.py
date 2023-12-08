@@ -3,12 +3,12 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 class VotingOption(models.Model):
-    vote_id = models.IntegerField(null=True)  # Allows NULL values
+    vote_id = models.IntegerField()
     option_number = models.IntegerField()
     option_name = models.CharField(max_length=200)
 
     def __str__(self):
-        return f"Vote ID: {self.vote_id}, Option {self.option_number}: {self.option_name}"
+        return f"Option {self.option_number}: {self.option_name} (Vote ID: {self.vote_id})"
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):

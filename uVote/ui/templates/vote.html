@@ -99,213 +99,213 @@
 	}
 	async function initContract() {
 		const contractABI = [
+	{
+		"anonymous": false,
+		"inputs": [
 			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256[]",
-						"name": "optionCounts",
-						"type": "uint256[]"
-					}
-				],
-				"name": "VoteEnded",
-				"type": "event"
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
 			},
 			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					}
-				],
-				"name": "VoteStarted",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "voter",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256[]",
-						"name": "selectedOptions",
-						"type": "uint256[]"
-					}
-				],
-				"name": "Voted",
-				"type": "event"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256[]",
-						"name": "selectedOptions",
-						"type": "uint256[]"
-					}
-				],
-				"name": "castVote",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					}
-				],
-				"name": "getMaxChoices",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "option",
-						"type": "uint256"
-					}
-				],
-				"name": "getOptionCount",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "voter",
-						"type": "address"
-					}
-				],
-				"name": "hasVoted",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					}
-				],
-				"name": "isVotingOpen",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "nextBallotId",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256[]",
-						"name": "_options",
-						"type": "uint256[]"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_maxChoices",
-						"type": "uint256"
-					}
-				],
-				"name": "startVote",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "ballotId",
-						"type": "uint256"
-					}
-				],
-				"name": "tallyVotes",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "optionCounts",
+				"type": "uint256[]"
 			}
-		];
-		const contractAddress = '0x6e214b44F8fe75fcA35b818Bbd639b4F3358B300';
+		],
+		"name": "VoteEnded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "VoteStarted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "selectedOptions",
+				"type": "uint256[]"
+			}
+		],
+		"name": "Voted",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "selectedOptions",
+				"type": "uint256[]"
+			}
+		],
+		"name": "castVote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "getMaxChoices",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "option",
+				"type": "uint256"
+			}
+		],
+		"name": "getOptionCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			}
+		],
+		"name": "hasVoted",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "isVotingOpen",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "nextBallotId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "_options",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_maxChoices",
+				"type": "uint256"
+			}
+		],
+		"name": "startVote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "tallyVotes",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+		const contractAddress = '0x300482fe58771c352260ceC0B969Db7241AC3192';
 		uVoteContract = new web3.eth.Contract(contractABI, contractAddress);
 		displayActiveVotes();
 	}
@@ -360,51 +360,67 @@
 		}
 	});
 
-	document.getElementById('create-vote-form').addEventListener('submit', async function (event) {
-		event.preventDefault();
+document.getElementById('create-vote-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
 
-		if (!walletAddress) {
-			console.error('Wallet address not available. Please connect your wallet.');
-			return;
-		}
+    if (!walletAddress) {
+        console.error('Wallet address not available. Please connect your wallet.');
+        return;
+    }
 
-		const maxChoices = parseInt(document.getElementById('max-choices').value, 10);
-		const optionsData = [];
+    const maxChoices = parseInt(document.getElementById('max-choices').value, 10);
+    const optionsData = [];
 
-		for (let i = 1; i <= maxChoices; i++) {
-			optionsData.push({
-				number: i,
-				name: document.getElementById(`option-name-${i}`).value
-			});
-		}
+    for (let i = 1; i <= maxChoices; i++) {
+        optionsData.push({
+            number: i,
+            name: document.getElementById(`option-name-${i}`).value
+        });
+    }
 
-		// Prepare data for sending to the smart contract (only numbers)
-		const optionNumbers = optionsData.map(option => option.number);
+    const optionNumbers = optionsData.map(option => option.number);
 
-		// Sending data to the smart contract
-		try {
-			const transaction = uVoteContract.methods.startVote(optionNumbers, maxChoices).send({ from: walletAddress });
+    try {
+        const transaction = uVoteContract.methods.startVote(optionNumbers, maxChoices).send({ from: walletAddress });
 
-			transaction.on('transactionHash', function (hash) {
-				console.log('Transaction Hash:', hash);
-			});
+        transaction.on('transactionHash', function (hash) {
+            console.log('Transaction Hash:', hash);
+        });
 
-			transaction.on('receipt', function (receipt) {
-				console.log('Receipt:', receipt);
-				$('#create-ballot-modal').modal('hide');
-				displayActiveVotes();
-			});
+        transaction.on('receipt', function (receipt) {
+            console.log('Complete Receipt:', receipt); // Log entire receipt for inspection
+            const voteId = extractVoteIdFromReceipt(receipt); // Extract voteId from the receipt
+            console.log('Extracted voteId:', voteId); // Log extracted voteId
 
-			transaction.on('error', function (error) {
-				console.error('Transaction Error:', error);
-			});
-		} catch (error) {
-			console.error('Error:', error);
-		}
+            if (voteId === null || voteId === undefined) {
+                console.error('Failed to extract voteId from receipt');
+                return; // Stop further execution if voteId is not valid
+            }
 
-		// Send the full options data (including names) to your backend
-		sendDataToServer(optionsData);
-	});
+            sendDataToServer(optionsData, voteId); // Now pass voteId along with optionsData
+            $('#create-ballot-modal').modal('hide');
+            displayActiveVotes();
+        });
+
+        transaction.on('error', function (error) {
+            console.error('Transaction Error:', error);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+function extractVoteIdFromReceipt(receipt) {
+    // Look for the 'VoteStarted' event in the transaction receipt
+    const voteStartedEvent = receipt.events ? receipt.events.VoteStarted : null;
+    if (voteStartedEvent) {
+        // Assuming 'ballotId' is the first argument in the event
+        return voteStartedEvent.returnValues.ballotId;
+    } else {
+        console.error('VoteStarted event not found in receipt');
+        return null; // or handle this case as needed
+    }
+}
 
 
 	document.getElementById('create-ballot-button').addEventListener('click', function () {
@@ -497,27 +513,42 @@
 			console.error('Error checking if voting is open:', error);
 		}
 	}
-	async function sendDataToServer(optionsData, voteId) {
-		try {
-			const response = await fetch('/submit_vote_options/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': getCookie('csrftoken'),  // Ensure CSRF token is sent
-				},
-				body: JSON.stringify({ optionsData, voteId })
-			});
+async function sendDataToServer(optionsData, voteId) {
+    // Log the inputs to the function
+    console.log('Sending data to server...');
+    console.log('Options Data:', optionsData);
+    console.log('Vote ID:', voteId);
 
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
-			}
+    try {
+        const requestBody = JSON.stringify({ optionsData, voteId });
+        // Log the request body
+        console.log('Request Body:', requestBody);
 
-			const data = await response.json();
-			console.log(data);
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
+        const response = await fetch('/submit_vote_options/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),  // Ensure CSRF token is sent
+            },
+            body: requestBody
+        });
+
+        // Log the response status
+        console.log('Response Status:', response.status);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        // Log the response data
+        console.log('Response Data:', data);
+    } catch (error) {
+        // Log any errors that occur during the fetch
+        console.error('Error during sendDataToServer:', error);
+    }
+}
+
 
 	// Helper function to get CSRF token
 	function getCookie(name) {

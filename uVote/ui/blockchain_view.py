@@ -22,6 +22,7 @@ def submit_vote_options(request):
                     option_number=option['number'],
                     option_name=option['name']
                 )
+                
             return JsonResponse({'status': 'success'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
@@ -44,7 +45,7 @@ def initialize_web3_and_contract():
     contract_abi = load_contract_abi()
 
     # Replace with your contract address
-    contract_address = '0x6e214b44F8fe75fcA35b818Bbd639b4F3358B300'
+    contract_address = '0x300482fe58771c352260ceC0B969Db7241AC3192'
 
     # Create a contract instance
     contract = web3.eth.contract(address=contract_address, abi=contract_abi)
