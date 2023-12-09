@@ -11,35 +11,26 @@
 				<div class="col-md-12 mb-2">
 					<button type="button" class="btn btn-primary" id="connect-wallet-button">Connect Wallet</button>
 				</div>
-				<div class="col-md-12">
+				<div class="col-md-12 mb-2">
 					<button type="button" class="btn btn-primary" id="create-ballot-button">Create Ballot</button>
 				</div>
-				<div>
-					<input type="number" id="check-open-vote-id" placeholder="Vote ID">
-					<button onclick="checkIfVotingOpen(getInputValue('check-open-vote-id'))">Check If Voting
-						Open</button>
-					<input type="number" id="get-max-choices-id" placeholder="Vote ID">
-					<button onclick="getMaxChoices(getInputValue('get-max-choices-id'))">Get Max Choices</button>
-					<input type="number" id="get-option-count-id" placeholder="Vote ID">
-					<input type="number" id="get-option-count-option" placeholder="Option">
-					<button
-						onclick="getOptionCount(getInputValue('get-option-count-id'), getInputValue('get-option-count-option'))">Get
-						Option Count</button>
-					<input type="number" id="check-voted-id" placeholder="Vote ID">
-					<input type="text" id="check-voted-address" placeholder="Voter Address">
-					<button
-						onclick="checkIfVoted(getInputValue('check-voted-id'), getInputValue('check-voted-address'))">Check
-						If Voted</button>
-					<input type="number" id="cast-vote-id" placeholder="Vote ID">
-					<input type="text" id="cast-vote-options" placeholder="Options (comma-separated)">
-					<button
-						onclick="castVote(getInputValue('cast-vote-id'), getInputValue('cast-vote-options').split(',').map(Number))">Cast
-						Vote</button>
-					<input type="number" id="tally-votes-id" placeholder="Vote ID">
-					<button onclick="tallyVotes(getInputValue('tally-votes-id'))">Tally Votes</button>
-
-
+				<div class="col-md-12 mb-2">
+					<button type="button" class="btn btn-primary" id="cast-vote-button">Cast Vote</button>
 				</div>
+				<div class="col-md-12 mb-2">
+					<button type="button" class="btn btn-primary" id="check-voting-open-button">Check If Voting
+						Open</button>
+				</div>
+				<div class="col-md-12 mb-2">
+					<button type="button" class="btn btn-primary" id="get-max-choices-button">Get Max Choices</button>
+				</div>
+				<div class="col-md-12 mb-2">
+					<button type="button" class="btn btn-primary" id="check-if-voted-button">Check If Voted</button>
+				</div>
+				<div class="col-md-12 mb-2">
+					<button type="button" class="btn btn-primary" id="tally-votes-button">Tally Votes</button>
+				</div>
+
 				<div id="create-ballot-modal" class="modal fade" tabindex="-1" role="dialog">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
@@ -48,9 +39,7 @@
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									<span aria-hidden="true">&times;</span>
 								</button>
-
 							</div>
-
 							<div class="modal-body">
 								<form id="create-vote-form">
 									{% csrf_token %}
@@ -80,6 +69,165 @@
 						</div>
 					</div>
 				</div>
+				<div id="cast-vote-modal" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Cast a Vote</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form id="cast-vote-form">
+									<div class="form-group">
+										<label for="cast-vote-id-modal">Vote ID:</label>
+										<input type="number" class="form-control" id="cast-vote-id-modal" required>
+									</div>
+									<div class="form-group">
+										<label for="cast-vote-options-modal">Options (comma-separated):</label>
+										<input type="text" class="form-control" id="cast-vote-options-modal" required>
+									</div>
+									<button type="submit" class="btn btn-primary">Submit Vote</button>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="check-voting-open-modal" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Check If Voting Is Open</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form id="check-voting-open-form">
+									<div class="form-group">
+										<label for="check-voting-open-id-modal">Vote ID:</label>
+										<input type="number" class="form-control" id="check-voting-open-id-modal"
+											required>
+									</div>
+									<button type="submit" class="btn btn-primary">Check Voting Status</button>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="get-max-choices-modal" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Get Maximum Choices</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form id="get-max-choices-form">
+									<div class="form-group">
+										<label for="get-max-choices-id-modal">Vote ID:</label>
+										<input type="number" class="form-control" id="get-max-choices-id-modal"
+											required>
+									</div>
+									<button type="submit" class="btn btn-primary">Get Choices</button>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="check-if-voted-modal" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Check If Voted</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form id="check-if-voted-form">
+									<div class="form-group">
+										<label for="check-if-voted-id-modal">Vote ID:</label>
+										<input type="number" class="form-control" id="check-if-voted-id-modal" required>
+									</div>
+									<div class="form-group">
+										<label for="check-if-voted-address-modal">Voter Address:</label>
+										<input type="text" class="form-control" id="check-if-voted-address-modal"
+											required>
+									</div>
+									<button type="submit" class="btn btn-primary">Check Voter Status</button>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="tally-votes-modal" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Tally Votes</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form id="tally-votes-form">
+									<div class="form-group">
+										<label for="tally-votes-id-modal">Vote ID:</label>
+										<input type="number" class="form-control" id="tally-votes-id-modal" required>
+									</div>
+									<button type="submit" class="btn btn-primary">Tally Votes</button>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="view-results-modal" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">View Results</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form id="view-results-form">
+									<div class="form-group">
+										<label for="view-results-id-modal">Vote ID:</label>
+										<input type="number" class="form-control" id="view-results-id-modal" required>
+									</div>
+									<button type="submit" class="btn btn-primary">View Results</button>
+								</form>
+								<!-- Place to display the results -->
+								<div id="vote-results-container"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
 				<div class="col-md-12" id="votes-container">
 					<!-- Active votes will be displayed here -->
 				</div>
@@ -99,213 +247,213 @@
 	}
 	async function initContract() {
 		const contractABI = [
-	{
-		"anonymous": false,
-		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256[]",
+						"name": "optionCounts",
+						"type": "uint256[]"
+					}
+				],
+				"name": "VoteEnded",
+				"type": "event"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "optionCounts",
-				"type": "uint256[]"
-			}
-		],
-		"name": "VoteEnded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
-			}
-		],
-		"name": "VoteStarted",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "voter",
-				"type": "address"
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					}
+				],
+				"name": "VoteStarted",
+				"type": "event"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "voter",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256[]",
+						"name": "selectedOptions",
+						"type": "uint256[]"
+					}
+				],
+				"name": "Voted",
+				"type": "event"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "selectedOptions",
-				"type": "uint256[]"
-			}
-		],
-		"name": "Voted",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "selectedOptions",
+						"type": "uint256[]"
+					}
+				],
+				"name": "castVote",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			},
 			{
-				"internalType": "uint256[]",
-				"name": "selectedOptions",
-				"type": "uint256[]"
-			}
-		],
-		"name": "castVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
-			}
-		],
-		"name": "getMaxChoices",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					}
+				],
+				"name": "getMaxChoices",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
 			},
 			{
-				"internalType": "uint256",
-				"name": "option",
-				"type": "uint256"
-			}
-		],
-		"name": "getOptionCount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "option",
+						"type": "uint256"
+					}
+				],
+				"name": "getOptionCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
 			},
 			{
-				"internalType": "address",
-				"name": "voter",
-				"type": "address"
-			}
-		],
-		"name": "hasVoted",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
-			}
-		],
-		"name": "isVotingOpen",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "nextBallotId",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "_options",
-				"type": "uint256[]"
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "voter",
+						"type": "address"
+					}
+				],
+				"name": "hasVoted",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_maxChoices",
-				"type": "uint256"
-			}
-		],
-		"name": "startVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					}
+				],
+				"name": "isVotingOpen",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
 			{
-				"internalType": "uint256",
-				"name": "ballotId",
-				"type": "uint256"
+				"inputs": [],
+				"name": "nextBallotId",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_options",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_maxChoices",
+						"type": "uint256"
+					}
+				],
+				"name": "startVote",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					}
+				],
+				"name": "tallyVotes",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			}
-		],
-		"name": "tallyVotes",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
-];
-		const contractAddress = '0x300482fe58771c352260ceC0B969Db7241AC3192';
+		];
+		const contractAddress = '0x2161d2F4Efd8A58682d91e91409E8d231e9307ef';
 		uVoteContract = new web3.eth.Contract(contractABI, contractAddress);
 		displayActiveVotes();
 	}
@@ -360,71 +508,109 @@
 		}
 	});
 
-document.getElementById('create-vote-form').addEventListener('submit', async function (event) {
-    event.preventDefault();
 
-    if (!walletAddress) {
-        console.error('Wallet address not available. Please connect your wallet.');
-        return;
-    }
+	function extractVoteIdFromReceipt(receipt) {
+		// Look for the 'VoteStarted' event in the transaction receipt
+		const voteStartedEvent = receipt.events ? receipt.events.VoteStarted : null;
+		if (voteStartedEvent) {
+			// Assuming 'ballotId' is the first argument in the event
+			return voteStartedEvent.returnValues.ballotId;
+		} else {
+			console.error('VoteStarted event not found in receipt');
+			return null; // or handle this case as needed
+		}
+	}
 
-    const maxChoices = parseInt(document.getElementById('max-choices').value, 10);
-    const optionsData = [];
-
-    for (let i = 1; i <= maxChoices; i++) {
-        optionsData.push({
-            number: i,
-            name: document.getElementById(`option-name-${i}`).value
-        });
-    }
-
-    const optionNumbers = optionsData.map(option => option.number);
-
-    try {
-        const transaction = uVoteContract.methods.startVote(optionNumbers, maxChoices).send({ from: walletAddress });
-
-        transaction.on('transactionHash', function (hash) {
-            console.log('Transaction Hash:', hash);
-        });
-
-        transaction.on('receipt', function (receipt) {
-            console.log('Complete Receipt:', receipt); // Log entire receipt for inspection
-            const voteId = extractVoteIdFromReceipt(receipt); // Extract voteId from the receipt
-            console.log('Extracted voteId:', voteId); // Log extracted voteId
-
-            if (voteId === null || voteId === undefined) {
-                console.error('Failed to extract voteId from receipt');
-                return; // Stop further execution if voteId is not valid
-            }
-
-            sendDataToServer(optionsData, voteId); // Now pass voteId along with optionsData
-            $('#create-ballot-modal').modal('hide');
-            displayActiveVotes();
-        });
-
-        transaction.on('error', function (error) {
-            console.error('Transaction Error:', error);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-    }
-});
-
-function extractVoteIdFromReceipt(receipt) {
-    // Look for the 'VoteStarted' event in the transaction receipt
-    const voteStartedEvent = receipt.events ? receipt.events.VoteStarted : null;
-    if (voteStartedEvent) {
-        // Assuming 'ballotId' is the first argument in the event
-        return voteStartedEvent.returnValues.ballotId;
-    } else {
-        console.error('VoteStarted event not found in receipt');
-        return null; // or handle this case as needed
-    }
-}
-
-
+	// Event listener to open the Cast Vote modal
+	document.getElementById('cast-vote-button').addEventListener('click', function () {
+		$('#cast-vote-modal').modal('show');
+	});
 	document.getElementById('create-ballot-button').addEventListener('click', function () {
 		$('#create-ballot-modal').modal('show');
+	});
+	document.getElementById('check-voting-open-button').addEventListener('click', function () {
+		$('#check-voting-open-modal').modal('show');
+	});
+	document.getElementById('get-max-choices-button').addEventListener('click', function () {
+		$('#get-max-choices-modal').modal('show');
+	});
+	document.getElementById('check-if-voted-button').addEventListener('click', function () {
+		$('#check-if-voted-modal').modal('show');
+	});
+	document.getElementById('tally-votes-button').addEventListener('click', function () {
+		$('#tally-votes-modal').modal('show');
+	});
+	document.getElementById('view-results-form').addEventListener('click', function () {
+		$('view-results-id-modal').modal('show');
+	});
+
+	// Handling the submission of the Cast Vote form
+	document.getElementById('cast-vote-form').addEventListener('submit', async function (event) {
+		event.preventDefault();
+		const ballotId = parseInt(document.getElementById('cast-vote-id-modal').value, 10);
+		const selectedOptions = document.getElementById('cast-vote-options-modal').value.split(',').map(Number);
+
+		try {
+			const transaction = await uVoteContract.methods.castVote(ballotId, selectedOptions).send({ from: walletAddress });
+			console.log('Vote cast successfully:', transaction);
+			$('#cast-vote-modal').modal('hide'); // Close the modal after successful transaction
+		} catch (error) {
+			console.error('Error casting vote:', error);
+		}
+	});
+
+
+	document.getElementById('create-vote-form').addEventListener('submit', async function (event) {
+		event.preventDefault();
+		if (!walletAddress) {
+			console.error('Wallet address not available. Please connect your wallet.');
+			return;
+		}
+
+		const maxChoices = parseInt(document.getElementById('max-choices').value, 10);
+		const optionsData = [];
+		for (let i = 1; i <= maxChoices; i++) {
+			optionsData.push({
+				number: i,
+				name: document.getElementById(`option-name-${i}`).value
+			});
+		}
+
+		const optionNumbers = optionsData.map(option => option.number);
+
+		try {
+			const transaction = await uVoteContract.methods.startVote(optionNumbers, maxChoices).send({ from: walletAddress });
+			// Additional transaction handling...
+			$('#create-ballot-modal').modal('hide');
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	});
+	document.getElementById('tally-votes-form').addEventListener('submit', async function (event) {
+		event.preventDefault();
+		const ballotId = parseInt(document.getElementById('tally-votes-id-modal').value, 10);
+
+		try {
+			const transaction = await uVoteContract.methods.tallyVotes(ballotId).send({ from: walletAddress });
+			console.log('Votes tallied successfully:', transaction);
+			$('#tally-votes-modal').modal('hide');
+		} catch (error) {
+			console.error('Error tallying votes:', error);
+		}
+	});
+	document.getElementById('view-results-form').addEventListener('submit', async function (event) {
+		event.preventDefault();
+		const ballotId = parseInt(document.getElementById('view-results-id-modal').value, 10);
+
+		try {
+			// Assuming there's a method in your contract to view results
+			const results = await uVoteContract.methods.viewResults(ballotId).call();
+			console.log('Results:', results);
+			// Display results logic here
+			$('#view-results-modal').modal('hide');
+		} catch (error) {
+			console.error('Error viewing results:', error);
+		}
 	});
 
 	async function displayActiveVotes() {
@@ -513,41 +699,41 @@ function extractVoteIdFromReceipt(receipt) {
 			console.error('Error checking if voting is open:', error);
 		}
 	}
-async function sendDataToServer(optionsData, voteId) {
-    // Log the inputs to the function
-    console.log('Sending data to server...');
-    console.log('Options Data:', optionsData);
-    console.log('Vote ID:', voteId);
+	async function sendDataToServer(optionsData, voteId) {
+		// Log the inputs to the function
+		console.log('Sending data to server...');
+		console.log('Options Data:', optionsData);
+		console.log('Vote ID:', voteId);
 
-    try {
-        const requestBody = JSON.stringify({ optionsData, voteId });
-        // Log the request body
-        console.log('Request Body:', requestBody);
+		try {
+			const requestBody = JSON.stringify({ optionsData, voteId });
+			// Log the request body
+			console.log('Request Body:', requestBody);
 
-        const response = await fetch('/submit_vote_options/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'),  // Ensure CSRF token is sent
-            },
-            body: requestBody
-        });
+			const response = await fetch('/submit_vote_options/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': getCookie('csrftoken'),  // Ensure CSRF token is sent
+				},
+				body: requestBody
+			});
 
-        // Log the response status
-        console.log('Response Status:', response.status);
+			// Log the response status
+			console.log('Response Status:', response.status);
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
 
-        const data = await response.json();
-        // Log the response data
-        console.log('Response Data:', data);
-    } catch (error) {
-        // Log any errors that occur during the fetch
-        console.error('Error during sendDataToServer:', error);
-    }
-}
+			const data = await response.json();
+			// Log the response data
+			console.log('Response Data:', data);
+		} catch (error) {
+			// Log any errors that occur during the fetch
+			console.error('Error during sendDataToServer:', error);
+		}
+	}
 
 
 	// Helper function to get CSRF token

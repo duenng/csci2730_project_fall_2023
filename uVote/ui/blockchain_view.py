@@ -45,7 +45,7 @@ def initialize_web3_and_contract():
     contract_abi = load_contract_abi()
 
     # Replace with your contract address
-    contract_address = '0x300482fe58771c352260ceC0B969Db7241AC3192'
+    contract_address = '0x2161d2F4Efd8A58682d91e91409E8d231e9307ef'
 
     # Create a contract instance
     contract = web3.eth.contract(address=contract_address, abi=contract_abi)
