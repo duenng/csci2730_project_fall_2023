@@ -6,7 +6,7 @@ from .models import VotingOption
 
 # admin.py
 class VotingOptionAdmin(admin.ModelAdmin):
-    list_display = ('vote_id', 'option_number', 'option_name')
+    list_display = ('vote_id','vote_title', 'option_number', 'option_name')
 
     
 

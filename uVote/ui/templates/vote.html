@@ -7,9 +7,11 @@
 				<div class="col-md-12 mb-4">
 					<h1 class="h2">Voting System</h1>
 				</div>
-				<div id="wallet-address-display"></div>
+				<div class="col-md-12 mb-4" id="wallet-address-display"></div>
+				<div class="col-md-12 mb-4" id="votes-container"></div>
 				<div class="col-md-12 mb-2">
-					<button type="button" class="btn btn-primary" id="connect-wallet-button">Connect Wallet</button>
+					<button type="button" class="btn btn-primary" id="connect-wallet-button">Connect Wallet/
+						Refresh</button>
 				</div>
 				<div class="col-md-12 mb-2">
 					<button type="button" class="btn btn-primary" id="create-ballot-button">Create Ballot</button>
@@ -30,6 +32,9 @@
 				<div class="col-md-12 mb-2">
 					<button type="button" class="btn btn-primary" id="tally-votes-button">Tally Votes</button>
 				</div>
+				<div class="col-md-12 mb-2">
+					<button type="button" class="btn btn-primary" id="view-results-button">View Results</button>
+				</div>
 
 				<div id="create-ballot-modal" class="modal fade" tabindex="-1" role="dialog">
 					<div class="modal-dialog" role="document">
@@ -42,198 +47,200 @@
 							</div>
 							<div class="modal-body">
 								<form id="create-vote-form">
+									<!-- CSRF Token -->
 									{% csrf_token %}
+									<!-- Wallet Address -->
 									<div class="form-group">
 										<label for="wallet-address">Wallet Address:</label>
 										<input type="text" class="form-control" id="wallet-address"
 											name="wallet-address" readonly>
 									</div>
+									<!-- Vote Title -->
 									<div class="form-group">
 										<label for="vote-title">Vote Title:</label>
 										<input type="text" class="form-control" id="vote-title" name="vote-title"
 											required>
 									</div>
+									<!-- Options Container -->
 									<div class="form-group">
 										<label for="max-choices">Max Choices:</label>
 										<input type="number" class="form-control" id="max-choices" name="max-choices"
 											required>
 									</div>
 									<div id="options-container">
+										<!-- Option fields will be generated here -->
 									</div>
+									<button type="button" id="add-option-button" class="btn btn-primary"
+										style="display: none;">Add Option</button>
+									<!-- Submit Button -->
 									<button type="submit" class="btn btn-primary">Create Vote</button>
 								</form>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="cast-vote-modal" class="modal fade" tabindex="-1" role="dialog">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Cast a Vote</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<form id="cast-vote-form">
-									<div class="form-group">
-										<label for="cast-vote-id-modal">Vote ID:</label>
-										<input type="number" class="form-control" id="cast-vote-id-modal" required>
-									</div>
-									<div class="form-group">
-										<label for="cast-vote-options-modal">Options (comma-separated):</label>
-										<input type="text" class="form-control" id="cast-vote-options-modal" required>
-									</div>
-									<button type="submit" class="btn btn-primary">Submit Vote</button>
-								</form>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="check-voting-open-modal" class="modal fade" tabindex="-1" role="dialog">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Check If Voting Is Open</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<form id="check-voting-open-form">
-									<div class="form-group">
-										<label for="check-voting-open-id-modal">Vote ID:</label>
-										<input type="number" class="form-control" id="check-voting-open-id-modal"
-											required>
-									</div>
-									<button type="submit" class="btn btn-primary">Check Voting Status</button>
-								</form>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="get-max-choices-modal" class="modal fade" tabindex="-1" role="dialog">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Get Maximum Choices</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<form id="get-max-choices-form">
-									<div class="form-group">
-										<label for="get-max-choices-id-modal">Vote ID:</label>
-										<input type="number" class="form-control" id="get-max-choices-id-modal"
-											required>
-									</div>
-									<button type="submit" class="btn btn-primary">Get Choices</button>
-								</form>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="check-if-voted-modal" class="modal fade" tabindex="-1" role="dialog">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Check If Voted</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<form id="check-if-voted-form">
-									<div class="form-group">
-										<label for="check-if-voted-id-modal">Vote ID:</label>
-										<input type="number" class="form-control" id="check-if-voted-id-modal" required>
-									</div>
-									<div class="form-group">
-										<label for="check-if-voted-address-modal">Voter Address:</label>
-										<input type="text" class="form-control" id="check-if-voted-address-modal"
-											required>
-									</div>
-									<button type="submit" class="btn btn-primary">Check Voter Status</button>
-								</form>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="tally-votes-modal" class="modal fade" tabindex="-1" role="dialog">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Tally Votes</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<form id="tally-votes-form">
-									<div class="form-group">
-										<label for="tally-votes-id-modal">Vote ID:</label>
-										<input type="number" class="form-control" id="tally-votes-id-modal" required>
-									</div>
-									<button type="submit" class="btn btn-primary">Tally Votes</button>
-								</form>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="view-results-modal" class="modal fade" tabindex="-1" role="dialog">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">View Results</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<form id="view-results-form">
-									<div class="form-group">
-										<label for="view-results-id-modal">Vote ID:</label>
-										<input type="number" class="form-control" id="view-results-id-modal" required>
-									</div>
-									<button type="submit" class="btn btn-primary">View Results</button>
-								</form>
-								<!-- Place to display the results -->
-								<div id="vote-results-container"></div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn mt-2 btn-secondary" data-dismiss="modal">Close</button>
 							</div>
 						</div>
 					</div>
 				</div>
 
+			</div>
 
-				<div class="col-md-12" id="votes-container">
-					<!-- Active votes will be displayed here -->
+			<div id="cast-vote-modal" class="modal fade" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Cast a Vote</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="cast-vote-form">
+								<div class="form-group">
+									<label for="cast-vote-id-modal">Vote ID:</label>
+									<input type="number" class="form-control" id="cast-vote-id-modal" required>
+								</div>
+								<!-- Dynamic Options Container -->
+								<div id="cast-vote-options-container"></div>
+								<button type="submit" class="btn btn-primary">Submit Vote</button>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="check-voting-open-modal" class="modal fade" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Check If Voting Is Open</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="check-voting-open-form">
+								<div class="form-group">
+									<label for="check-voting-open-id-modal">Vote ID:</label>
+									<input type="number" class="form-control" id="check-voting-open-id-modal" required>
+								</div>
+								<button type="submit" class="btn btn-primary">Check Voting Status</button>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="get-max-choices-modal" class="modal fade" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Get Maximum Choices</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="get-max-choices-form">
+								<div class="form-group">
+									<label for="get-max-choices-id-modal">Vote ID:</label>
+									<input type="number" class="form-control" id="get-max-choices-id-modal" required>
+								</div>
+								<button type="submit" class="btn btn-primary">Get Choices</button>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="check-if-voted-modal" class="modal fade" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Check If Voted</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="check-if-voted-form">
+								<div class="form-group">
+									<label for="check-if-voted-id-modal">Vote ID:</label>
+									<input type="number" class="form-control" id="check-if-voted-id-modal" required>
+								</div>
+								<div class="form-group">
+									<label for="check-if-voted-address-modal">Voter Address:</label>
+									<input type="text" class="form-control" id="check-if-voted-address-modal" required>
+								</div>
+								<button type="submit" class="btn btn-primary">Check Voter Status</button>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="tally-votes-modal" class="modal fade" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Tally Votes</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="tally-votes-form">
+								<div class="form-group">
+									<label for="tally-votes-id-modal">Vote ID:</label>
+									<input type="number" class="form-control" id="tally-votes-id-modal" required>
+								</div>
+								<button type="submit" class="btn btn-primary">Tally Votes</button>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="view-results-modal" class="modal fade" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">View Results</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="view-results-form">
+								<div class="form-group">
+									<label for="view-results-id-modal">Vote ID:</label>
+									<input type="number" class="form-control" id="view-results-id-modal" required>
+								</div>
+								<button type="submit" class="btn btn-primary">View Results</button>
+							</form>
+							<!-- Place to display the results -->
+							<div id="vote-results-container"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</section>
+</div>
+</section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/web3@1.3.0/dist/web3.min.js"></script>
@@ -330,12 +337,73 @@
 						"type": "uint256"
 					}
 				],
+				"name": "getBallotInitiator",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					}
+				],
+				"name": "getBallotResults",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "votingIsOpen",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "options",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "counts",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					}
+				],
 				"name": "getMaxChoices",
 				"outputs": [
 					{
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getOpenBallotIds",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
 					}
 				],
 				"stateMutability": "view",
@@ -453,11 +521,41 @@
 				"type": "function"
 			}
 		];
-		const contractAddress = '0x2161d2F4Efd8A58682d91e91409E8d231e9307ef';
+		const contractAddress = '0x5c1612f3d8b2eB23537f92A85616A063b6bD13AF';
 		uVoteContract = new web3.eth.Contract(contractABI, contractAddress);
 		displayActiveVotes();
 	}
+	async function fetchBallotDetails(ballotId) {
+		// Example implementation (you need to replace this with actual logic)
+		return {
+			title: `Ballot ${ballotId}` // Placeholder title
+		};
+	}
+	async function fetchAvailableVotes() {
+		try {
+			// Call the smart contract method to get the IDs of open ballots
+			const openBallots = await uVoteContract.methods.getOpenBallotIds().call();
 
+			const dropdown = document.getElementById('select-vote-dropdown');
+			dropdown.innerHTML = ''; // Clear existing options
+
+			// Iterate through each open ballot
+			for (const ballotId of openBallots) {
+				// Fetch additional details for each ballot (e.g., title)
+				// Placeholder: Replace this with the actual call to get ballot details
+				// For instance, you might have a getBallotDetails method in your contract
+				const ballotDetails = await fetchBallotDetails(ballotId); // This is a placeholder function
+
+				// Create a dropdown option for each ballot
+				const option = document.createElement('option');
+				option.value = ballotId;
+				option.textContent = ballotDetails.title; // Assuming ballotDetails contains a title
+				dropdown.appendChild(option);
+			}
+		} catch (error) {
+			console.error('Error fetching available votes:', error);
+		}
+	}
 	async function initWeb3() {
 		if (typeof window.ethereum !== 'undefined') {
 			web3 = new Web3(window.ethereum);
@@ -540,78 +638,377 @@
 	document.getElementById('tally-votes-button').addEventListener('click', function () {
 		$('#tally-votes-modal').modal('show');
 	});
-	document.getElementById('view-results-form').addEventListener('click', function () {
-		$('view-results-id-modal').modal('show');
+	document.getElementById('view-results-button').addEventListener('click', function () {
+		$('#view-results-modal').modal('show');
 	});
+
+	function generateOptionFields(maxOptions = 10) {
+		const optionFieldsContainer = document.getElementById('option-fields');
+		optionFieldsContainer.innerHTML = '';
+
+		for (let i = 1; i <= maxOptions; i++) {
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.className = 'form-control mb-2';
+			input.id = `option-${i}`;
+			input.name = `option-${i}`;
+			input.placeholder = `Option ${i}`;
+
+			optionFieldsContainer.appendChild(input);
+		}
+	}
+
+	async function fetchVotingOptions(voteId) {
+		try {
+			const response = await fetch(`/get_voting_options/${voteId}/`);
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			const optionsArray = await response.json();
+			// Convert array to a map for easier access
+			const optionsMap = {};
+			optionsArray.forEach(option => {
+				optionsMap[option.option_number] = option.option_name;
+			});
+			return optionsMap;
+		} catch (error) {
+			console.error('Error fetching voting options:', error);
+			return {};
+		}
+	}
+
+	async function displayVotingOptions(ballotId) {
+		vote_id = ballotId
+		try {
+			// Fetch options from Django backend
+			const response = await fetch(`/get_voting_options/${vote_id}/`);
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			const options = await response.json();
+			console.log(options)
+			// Now display the options as checkboxes
+			const optionsContainer = document.getElementById('cast-vote-options-container');
+			optionsContainer.innerHTML = '';
+			options.forEach(option => {
+				const checkbox = document.createElement('input');
+				checkbox.type = 'checkbox';
+				checkbox.id = `option-${option.option_number}`;
+				checkbox.value = option.option_number;
+				checkbox.name = 'selectedOptions';
+
+				const label = document.createElement('label');
+				label.htmlFor = `option-${option.option_number}`;
+				label.appendChild(document.createTextNode(`${option.option_name}`));
+
+				optionsContainer.appendChild(checkbox);
+				optionsContainer.appendChild(label);
+				optionsContainer.appendChild(document.createElement('br'));
+			});
+		} catch (error) {
+			console.error('Error fetching voting options:', error);
+		}
+	}
+	async function isEligibleToVote(ballotId, userAddress) {
+		try {
+			return await uVoteContract.methods.hasVoted(ballotId, userAddress).call();
+		} catch (error) {
+			console.error('Error checking voting eligibility:', error);
+			return false;
+		}
+	}
+
+
+	function generateOptionField(optionNumber) {
+		const optionFieldsContainer = document.getElementById('options-container');
+
+		// Create a container for each option
+		const optionContainer = document.createElement('div');
+		optionContainer.id = `option-container-${optionNumber}`;
+		optionContainer.className = 'option-container mb-3';
+
+		// Create the read-only number field
+		const numberInputField = document.createElement('input');
+		numberInputField.type = 'number';
+		numberInputField.className = 'form-control mb-1';
+		numberInputField.value = optionNumber;
+		numberInputField.readOnly = true;
+
+		// Create the text input field for the option
+		const nameInputField = document.createElement('input');
+		nameInputField.type = 'text';
+		nameInputField.className = 'form-control mb-1';
+		nameInputField.id = `option-name-${optionNumber}`;
+		nameInputField.placeholder = `Option Name ${optionNumber}`;
+
+		// Create the delete button
+		const deleteButton = document.createElement('button');
+		deleteButton.type = 'button';
+		deleteButton.className = 'btn btn-danger';
+		deleteButton.textContent = 'Delete';
+		deleteButton.onclick = function () {
+			// Remove the option container when the delete button is clicked
+			optionFieldsContainer.removeChild(optionContainer);
+			// Update the numbering of the remaining options
+			updateOptionNumbers();
+		};
+
+		// Append the number field, name field, and delete button to the option container
+		optionContainer.appendChild(numberInputField);
+		optionContainer.appendChild(nameInputField);
+		optionContainer.appendChild(deleteButton);
+
+		// Append the option container to the main container
+		optionFieldsContainer.appendChild(optionContainer);
+	}
+
+	function updateOptionNumbers() {
+		const optionContainers = document.querySelectorAll('.option-container');
+		optionContainers.forEach((container, index) => {
+			const optionNumber = index + 1;
+			container.querySelector('input[type="number"]').value = optionNumber;
+			container.id = `option-container-${optionNumber}`;
+			const nameInputField = container.querySelector('input[type="text"]');
+			nameInputField.id = `option-name-${optionNumber}`;
+			nameInputField.placeholder = `Option Name ${optionNumber}`;
+		});
+	}
+
+
+	document.getElementById('max-choices').addEventListener('input', function (event) {
+		const maxChoices = parseInt(event.target.value, 10);
+		const addOptionButton = document.getElementById('add-option-button');
+
+		// Clear existing options
+		document.getElementById('options-container').innerHTML = '';
+
+		// Generate initial option fields based on maxChoices
+		for (let i = 1; i <= maxChoices; i++) {
+			generateOptionField(i);
+		}
+
+		// Toggle the visibility of the Add Option button
+		if (!isNaN(maxChoices) && maxChoices > 0) {
+			addOptionButton.style.display = 'block'; // Show the button
+		} else {
+			addOptionButton.style.display = 'none'; // Hide the button
+		}
+	});
+
+	document.getElementById('add-option-button').addEventListener('click', function () {
+		const existingOptions = document.querySelectorAll('#options-container input[type="text"]').length;
+		generateOptionField(existingOptions + 1);
+	});
+
+
+
+	let currentMaxChoices = 0;
+
+	document.getElementById('cast-vote-id-modal').addEventListener('change', async function () {
+		const ballotId = parseInt(this.value, 10);
+		if (!isNaN(ballotId)) {
+			displayVotingOptions(ballotId);
+
+			// Fetch maximum choices for the selected vote
+			try {
+				currentMaxChoices = await uVoteContract.methods.getMaxChoices(ballotId).call();
+			} catch (error) {
+				console.error('Error fetching maximum choices:', error);
+				currentMaxChoices = 0; // Reset if there's an error
+			}
+		}
+	});
+	document.getElementById('create-vote-form').addEventListener('submit', async function (event) {
+		event.preventDefault();
+		const walletAddress = document.getElementById('wallet-address').value;
+		const voteTitle = document.getElementById('vote-title').value;
+		const maxChoices = parseInt(document.getElementById('max-choices').value, 10);
+
+		const optionsData = [];
+		const optionNameInputs = document.querySelectorAll('#options-container input[type="text"]');
+
+		optionNameInputs.forEach((input, index) => {
+			if (input.value.trim() !== '') {
+				optionsData.push({ number: index + 1, name: input.value.trim() });
+			}
+		});
+
+		if (optionsData.length === 0) {
+			alert('Please enter at least one option.');
+			return;
+		}
+
+		if (maxChoices > optionsData.length) {
+			alert('Max choices cannot be more than the number of options filled.');
+			return;
+		}
+
+		try {
+			const transaction = await uVoteContract.methods.startVote(optionsData.map(option => option.number), maxChoices).send({ from: walletAddress });
+			console.log('Vote created successfully:', transaction);
+
+			const voteId = extractVoteIdFromReceipt(transaction);
+
+			if (voteId !== null) {
+				await sendDataToServer(optionsData, voteId, voteTitle);
+				console.log('Options data sent to server');
+			} else {
+				console.error('Unable to extract vote ID from transaction receipt');
+			}
+
+			$('#create-ballot-modal').modal('hide');
+		} catch (error) {
+			console.error('Error creating vote:', error);
+		}
+	});
+
 
 	// Handling the submission of the Cast Vote form
 	document.getElementById('cast-vote-form').addEventListener('submit', async function (event) {
 		event.preventDefault();
 		const ballotId = parseInt(document.getElementById('cast-vote-id-modal').value, 10);
-		const selectedOptions = document.getElementById('cast-vote-options-modal').value.split(',').map(Number);
 
+		// Gather selected options from checked checkboxes
+		const selectedOptions = Array.from(document.querySelectorAll('#cast-vote-options-container input[type="checkbox"]:checked')).map(checkbox => parseInt(checkbox.value, 10));
+
+		// Check if the number of selected options exceeds the maximum allowed choices
+		if (selectedOptions.length > currentMaxChoices) {
+			alert(`You can only select up to ${currentMaxChoices} options.`);
+			return;
+		}
+		const alreadyVoted = await isEligibleToVote(ballotId, walletAddress);
+		if (alreadyVoted) {
+			alert('You have already cast your vote for this ballot.');
+			return;
+		}
 		try {
 			const transaction = await uVoteContract.methods.castVote(ballotId, selectedOptions).send({ from: walletAddress });
 			console.log('Vote cast successfully:', transaction);
-			$('#cast-vote-modal').modal('hide'); // Close the modal after successful transaction
+			$('#cast-vote-modal').modal('hide');
 		} catch (error) {
 			console.error('Error casting vote:', error);
 		}
 	});
 
 
-	document.getElementById('create-vote-form').addEventListener('submit', async function (event) {
+	document.getElementById('check-voting-open-form').addEventListener('submit', async function (event) {
 		event.preventDefault();
-		if (!walletAddress) {
-			console.error('Wallet address not available. Please connect your wallet.');
-			return;
-		}
-
-		const maxChoices = parseInt(document.getElementById('max-choices').value, 10);
-		const optionsData = [];
-		for (let i = 1; i <= maxChoices; i++) {
-			optionsData.push({
-				number: i,
-				name: document.getElementById(`option-name-${i}`).value
-			});
-		}
-
-		const optionNumbers = optionsData.map(option => option.number);
+		const ballotId = parseInt(document.getElementById('check-voting-open-id-modal').value, 10);
 
 		try {
-			const transaction = await uVoteContract.methods.startVote(optionNumbers, maxChoices).send({ from: walletAddress });
-			// Additional transaction handling...
-			$('#create-ballot-modal').modal('hide');
+			const isOpen = await uVoteContract.methods.isVotingOpen(ballotId).call();
+			document.getElementById('check-voting-open-modal').getElementsByClassName('modal-body')[0].innerHTML =
+				`<p>Voting for ballot ID ${ballotId} is open: ${isOpen}</p>`;
 		} catch (error) {
-			console.error('Error:', error);
+			console.error('Error checking if voting is open:', error);
 		}
 	});
+	document.getElementById('get-max-choices-form').addEventListener('submit', async function (event) {
+		event.preventDefault();
+		const ballotId = parseInt(document.getElementById('get-max-choices-id-modal').value, 10);
+
+		try {
+			const maxChoices = await uVoteContract.methods.getMaxChoices(ballotId).call();
+			document.getElementById('get-max-choices-modal').getElementsByClassName('modal-body')[0].innerHTML =
+				`<p>Maximum choices for ballot ID ${ballotId}: ${maxChoices}</p>`;
+		} catch (error) {
+			console.error('Error getting maximum choices:', error);
+		}
+	});
+
+	document.getElementById('check-if-voted-form').addEventListener('submit', async function (event) {
+		event.preventDefault();
+		const ballotId = parseInt(document.getElementById('check-if-voted-id-modal').value, 10);
+		const voterAddress = document.getElementById('check-if-voted-address-modal').value;
+
+		try {
+			const hasVoted = await uVoteContract.methods.hasVoted(ballotId, voterAddress).call();
+			document.getElementById('check-if-voted-modal').getElementsByClassName('modal-body')[0].innerHTML =
+				`<p>Voter ${voterAddress} has voted in ballot ID ${ballotId}: ${hasVoted}</p>`;
+		} catch (error) {
+			console.error('Error checking if voted:', error);
+		}
+	});
+
 	document.getElementById('tally-votes-form').addEventListener('submit', async function (event) {
 		event.preventDefault();
 		const ballotId = parseInt(document.getElementById('tally-votes-id-modal').value, 10);
 
 		try {
+			// Check if the current user is the ballot initiator
+			const ballotInitiator = await uVoteContract.methods.getBallotInitiator(ballotId).call();
+			if (ballotInitiator !== walletAddress) {
+				alert('You are not authorized to tally these votes.');
+				return;
+			}
+
+			// If the user is the ballot initiator, proceed with tallying votes
 			const transaction = await uVoteContract.methods.tallyVotes(ballotId).send({ from: walletAddress });
 			console.log('Votes tallied successfully:', transaction);
 			$('#tally-votes-modal').modal('hide');
 		} catch (error) {
 			console.error('Error tallying votes:', error);
+			alert('Error tallying votes. Please check the console for more information.');
 		}
 	});
+
 	document.getElementById('view-results-form').addEventListener('submit', async function (event) {
 		event.preventDefault();
 		const ballotId = parseInt(document.getElementById('view-results-id-modal').value, 10);
 
 		try {
-			// Assuming there's a method in your contract to view results
-			const results = await uVoteContract.methods.viewResults(ballotId).call();
-			console.log('Results:', results);
-			// Display results logic here
-			$('#view-results-modal').modal('hide');
+			const results = await uVoteContract.methods.getBallotResults(ballotId).call();
+			const optionsMap = await fetchVotingOptions(ballotId);
+
+			let resultsContent = `<p>Results for ballot ID ${ballotId}:</p>`;
+			resultsContent += `<p>Voting is Open: ${results.votingIsOpen}</p>`;
+			resultsContent += `<ul>`;
+			results.options.forEach((optionNumber, index) => {
+				const optionName = optionsMap[optionNumber] || `Option ${optionNumber}`;
+				const votesCount = results.counts[index];
+				resultsContent += `<li>${optionName}: ${votesCount} votes</li>`;
+			});
+			resultsContent += `</ul>`;
+
+			document.getElementById('vote-results-container').innerHTML = resultsContent;
 		} catch (error) {
 			console.error('Error viewing results:', error);
 		}
 	});
+	async function fetchVoteTitle(voteId) {
+		try {
+			vote_id = voteId;
+			const response = await fetch(`/get_vote_title/${vote_id}/`);
+			const data = await response.json();
+			return data.title;
+		} catch (error) {
+			console.error('Error fetching vote title:', error);
+			return 'Unknown Vote'; // Fallback title in case of error
+		}
+	}
+
+	async function renderVotes(voteList) {
+		const votesContainer = document.getElementById('votes-container');
+		if (!votesContainer) {
+			console.error('Votes container not found');
+			return;
+		}
+		votesContainer.innerHTML = '';
+
+		if (voteList.length === 0) {
+			console.log('No active votes found');
+			votesContainer.innerHTML = '<p>No active votes available.</p>';
+		} else {
+			for (const voteId of voteList) {
+				console.log(`Fetching title for vote ID: ${voteId}`);
+				const voteTitle = await fetchVoteTitle(voteId);
+				const voteElement = document.createElement('div');
+				voteElement.classList.add('vote-item');
+				voteElement.innerText = `Vote ID: ${voteId} - ${voteTitle}`;
+				votesContainer.appendChild(voteElement);
+			}
+		}
+	}
 
 	async function displayActiveVotes() {
 		if (!uVoteContract) {
@@ -621,46 +1018,43 @@
 
 		try {
 			const nextBallotId = await uVoteContract.methods.nextBallotId().call();
+			console.log(`Total ballots: ${nextBallotId}`);
 			let activeVotes = [];
 
 			for (let i = 0; i < nextBallotId; i++) {
+				console.log(`Checking if voting is open for ballot ID: ${i}`);
 				let isOpen = await uVoteContract.methods.isVotingOpen(i).call();
 				if (isOpen) {
 					activeVotes.push(i);
 				}
 			}
 
+			console.log(`Active votes: ${activeVotes.length}`);
 			renderVotes(activeVotes);
 		} catch (error) {
 			console.error('Error fetching active votes:', error);
 		}
-	}
-
-	function renderVotes(voteList) {
-		const votesContainer = document.getElementById('votes-container');
-		votesContainer.innerHTML = '';
-
-		voteList.forEach(vote => {
-			const voteElement = document.createElement('div');
-			voteElement.classList.add('vote-item');
-			voteElement.innerText = `Vote ID: ${vote}`;
-			votesContainer.appendChild(voteElement);
-		});
 	}
 	async function tallyVotes(ballotId) {
 		try {
 			const transaction = await uVoteContract.methods.tallyVotes(ballotId).send({ from: walletAddress });
 			console.log('Votes tallied successfully:', transaction);
 		} catch (error) {
-			console.error('Error tallying votes:', error);
+			if (error.message.includes("Only the ballot initiator can tally votes")) {
+				console.error('You are not authorized to tally these votes.');
+			} else {
+				console.error('Error tallying votes:', error);
+			}
 		}
 	}
 	async function castVote(ballotId, selectedOptions) {
 		try {
 			const transaction = await uVoteContract.methods.castVote(ballotId, selectedOptions).send({ from: walletAddress });
 			console.log('Vote cast successfully:', transaction);
+			$('#cast-vote-modal').modal('hide');
 		} catch (error) {
 			console.error('Error casting vote:', error);
+			alert('An error occurred while casting your vote. Please check the console for more information.');
 		}
 	}
 	async function checkIfVoted(ballotId, voterAddress) {
@@ -699,27 +1093,26 @@
 			console.error('Error checking if voting is open:', error);
 		}
 	}
-	async function sendDataToServer(optionsData, voteId) {
-		// Log the inputs to the function
+	async function sendDataToServer(optionsData, voteId, voteTitle) {
 		console.log('Sending data to server...');
 		console.log('Options Data:', optionsData);
 		console.log('Vote ID:', voteId);
+		console.log('Vote Title:', voteTitle);
 
 		try {
-			const requestBody = JSON.stringify({ optionsData, voteId });
-			// Log the request body
+			const requestBody = JSON.stringify({ optionsData, voteId, voteTitle });
+
 			console.log('Request Body:', requestBody);
 
 			const response = await fetch('/submit_vote_options/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-CSRFToken': getCookie('csrftoken'),  // Ensure CSRF token is sent
+					'X-CSRFToken': getCookie('csrftoken'),
 				},
 				body: requestBody
 			});
 
-			// Log the response status
 			console.log('Response Status:', response.status);
 
 			if (!response.ok) {
@@ -727,10 +1120,8 @@
 			}
 
 			const data = await response.json();
-			// Log the response data
 			console.log('Response Data:', data);
 		} catch (error) {
-			// Log any errors that occur during the fetch
 			console.error('Error during sendDataToServer:', error);
 		}
 	}

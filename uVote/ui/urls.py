@@ -13,4 +13,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('please/', views.please, name='please'),
     path('submit_vote_options/', views.submit_vote_options, name='submit_vote_options'),
+    path('get_voting_options/<int:vote_id>/', views.get_voting_options, name='get_voting_options'),
+    path('get_vote_title/<int:vote_id>/', views.get_vote_title, name='get_vote_title'),
 ]

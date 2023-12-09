@@ -6,9 +6,11 @@ class VotingOption(models.Model):
     vote_id = models.IntegerField()
     option_number = models.IntegerField()
     option_name = models.CharField(max_length=200)
+    vote_title = models.CharField(max_length=200)  # New field for vote title
 
     def __str__(self):
-        return f"Option {self.option_number}: {self.option_name} (Vote ID: {self.vote_id})"
+        return f"Vote Title: {self.vote_title}, Option {self.option_number}: {self.option_name} (Vote ID: {self.vote_id})"
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):

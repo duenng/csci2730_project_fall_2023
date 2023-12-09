@@ -6,7 +6,25 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import VotingOption
 import os
 
+def get_vote_title(request, vote_id):
+    try:
+        vote_options = VotingOption.objects.filter(vote_id=vote_id)
+        if vote_options.exists():
+            vote_title = vote_options.first().vote_title  # Assuming 'vote_title' is a field in your model
+            return JsonResponse({'title': vote_title})
+        else:
+            return JsonResponse({'title': 'Unknown Vote'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
+def get_voting_options(request, vote_id):
+    try:
+        options = VotingOption.objects.filter(vote_id=vote_id).values('option_number', 'option_name')
+        return JsonResponse(list(options), safe=False)
+    except Exception as e:
+        # Log the exception for debugging
+        print(f"Error fetching voting options: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
 
 def submit_vote_options(request):
     if request.method == 'POST':
@@ -14,11 +32,12 @@ def submit_vote_options(request):
             data = json.loads(request.body)
             options_data = data['optionsData']
             vote_id = data['voteId']  # Capture the vote ID
-
+            vote_title = data['voteTitle'] 
             # Process and save each option with the vote ID
             for option in options_data:
                 VotingOption.objects.create(
                     vote_id=vote_id,
+                    vote_title= vote_title,
                     option_number=option['number'],
                     option_name=option['name']
                 )
@@ -45,7 +64,7 @@ def initialize_web3_and_contract():
     contract_abi = load_contract_abi()
 
     # Replace with your contract address
-    contract_address = '0x2161d2F4Efd8A58682d91e91409E8d231e9307ef'
+    contract_address = '0x5c1612f3d8b2eB23537f92A85616A063b6bD13AF'
 
     # Create a contract instance
     contract = web3.eth.contract(address=contract_address, abi=contract_abi)
